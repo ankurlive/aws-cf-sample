@@ -152,6 +152,7 @@ Check CloudWatch Logs for detailed error information:
 
 ## Screenshots
 
-![Google](https://docs.google.com/document/d/1TR_4AMgYNhvO1dI3CWUC8BB0PNZ8IKzHAj6C45wTlsI/edit?usp=sharing)
+[Google Document](https://docs.google.com/document/d/1TR_4AMgYNhvO1dI3CWUC8BB0PNZ8IKzHAj6C45wTlsI/edit?usp=sharing)
+
 
 
