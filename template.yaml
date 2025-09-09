@@ -1,0 +1,197 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Production-ready serverless application with DynamoDB, Lambda, and API Gateway
+
+Resources:
+  # DynamoDB Tables
+  FeedbackCollectionTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: feedback-collection
+      AttributeDefinitions:
+        - AttributeName: feedbackId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: feedbackId
+          KeyType: HASH
+      BillingMode: PAY_PER_REQUEST
+
+  UsageCollectionTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: usage-collection
+      AttributeDefinitions:
+        - AttributeName: usageId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: usageId
+          KeyType: HASH
+      BillingMode: PAY_PER_REQUEST
+
+  # Lambda Functions
+  FeedbackCollectionFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: feedback_collection
+      Runtime: python3.12
+      Handler: index.lambda_handler
+      CodeUri: lambdas/feedback_collection/
+      Environment:
+        Variables:
+          DYNAMODB_TABLE: !Ref FeedbackCollectionTable
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref FeedbackCollectionTable
+      Events:
+        HttpApi:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref FeedbackCollectionHttpApi
+            Method: ANY
+            Path: /{proxy+}
+
+  GetAliasPromtFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: get-alias-promt
+      Runtime: python3.12
+      Handler: index.lambda_handler
+      CodeUri: lambdas/get_alias_promt/
+      Environment:
+        Variables:
+          DYNAMODB_TABLE: !Ref UsageCollectionTable
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref UsageCollectionTable
+      Events:
+        RestApi:
+          Type: Api
+          Properties:
+            RestApiId: !Ref MyPromtsRestApi
+            Method: ANY
+            Path: /{proxy+}
+
+  UpdateUsageFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: updateusage
+      Runtime: python3.12
+      Handler: index.lambda_handler
+      CodeUri: lambdas/updateusage/
+      Environment:
+        Variables:
+          DYNAMODB_TABLE: !Ref UsageCollectionTable
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref UsageCollectionTable
+      Events:
+        RestApi:
+          Type: Api
+          Properties:
+            RestApiId: !Ref UpdateUsageRestApi
+            Method: ANY
+            Path: /{proxy+}
+
+  # API Gateway
+  FeedbackCollectionHttpApi:
+    Type: AWS::Serverless::HttpApi
+    Properties:
+      Name: feedback-collection
+      StageName: Prod
+
+  MyPromtsRestApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      Name: my-promts
+      StageName: Prod
+      EndpointConfiguration:
+        Type: REGIONAL
+      Models:
+        PromptsRequestModel:
+          type: object
+          required:
+            - alias
+          properties:
+            alias:
+              type: string
+              minLength: 1
+              maxLength: 50
+
+  UpdateUsageRestApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      Name: updateUsage
+      StageName: Prod
+      EndpointConfiguration:
+        Type: REGIONAL
+      Models:
+        UsageRequestModel:
+          type: object
+          required:
+            - alias
+            - timestamp
+            - prompt
+          properties:
+            alias:
+              type: string
+              minLength: 1
+              maxLength: 50
+            timestamp:
+              type: string
+              format: date-time
+            prompt:
+              type: string
+              minLength: 1
+              maxLength: 1000
+
+Outputs:
+  # DynamoDB Table Names
+  FeedbackCollectionTableName:
+    Description: Name of the feedback collection DynamoDB table
+    Value: !Ref FeedbackCollectionTable
+    Export:
+      Name: !Sub "${AWS::StackName}-FeedbackCollectionTable"
+
+  UsageCollectionTableName:
+    Description: Name of the usage collection DynamoDB table
+    Value: !Ref UsageCollectionTable
+    Export:
+      Name: !Sub "${AWS::StackName}-UsageCollectionTable"
+
+  # Lambda ARNs
+  FeedbackCollectionFunctionArn:
+    Description: ARN of the feedback collection Lambda function
+    Value: !GetAtt FeedbackCollectionFunction.Arn
+    Export:
+      Name: !Sub "${AWS::StackName}-FeedbackCollectionFunctionArn"
+
+  GetAliasPromtFunctionArn:
+    Description: ARN of the get alias promt Lambda function
+    Value: !GetAtt GetAliasPromtFunction.Arn
+    Export:
+      Name: !Sub "${AWS::StackName}-GetAliasPromtFunctionArn"
+
+  UpdateUsageFunctionArn:
+    Description: ARN of the update usage Lambda function
+    Value: !GetAtt UpdateUsageFunction.Arn
+    Export:
+      Name: !Sub "${AWS::StackName}-UpdateUsageFunctionArn"
+
+  # API Gateway Endpoints
+  FeedbackCollectionApiUrl:
+    Description: HTTP API Gateway endpoint URL for feedback collection
+    Value: !Sub "https://${FeedbackCollectionHttpApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/"
+    Export:
+      Name: !Sub "${AWS::StackName}-FeedbackCollectionApiUrl"
+
+  MyPromtsApiUrl:
+    Description: REST API Gateway endpoint URL for my promts
+    Value: !Sub "https://${MyPromtsRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/"
+    Export:
+      Name: !Sub "${AWS::StackName}-MyPromtsApiUrl"
+
+  UpdateUsageApiUrl:
+    Description: REST API Gateway endpoint URL for update usage
+    Value: !Sub "https://${UpdateUsageRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/"
+    Export:
+      Name: !Sub "${AWS::StackName}-UpdateUsageApiUrl"
