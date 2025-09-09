@@ -6,7 +6,7 @@ AWS CloudFormation, featuring DynamoDB, Lambda functions, and API Gateway for fe
 
 This application consists of:
 
-- **3 Lambda Functions** (Python 3.12)
+- **1 Lambda Functions** (Python 3.12)
   - `feedback_collection` - Handles feedback data collection
   - `get_alias_promt` - Retrieves alias prompts
   - `updateusage` - Updates usage statistics
@@ -153,4 +153,5 @@ Check CloudWatch Logs for detailed error information:
 ## Screenshots
 
 ![Google](https://docs.google.com/document/d/1TR_4AMgYNhvO1dI3CWUC8BB0PNZ8IKzHAj6C45wTlsI/edit?usp=sharing)
+
 
