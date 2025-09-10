@@ -15,6 +15,9 @@ Resources:
         - AttributeName: feedbackId
           KeyType: HASH
       BillingMode: PAY_PER_REQUEST
+      TimeToLiveSpecification:
+        AttributeName: ttl
+        Enabled: true
 
   UsageCollectionTable:
     Type: AWS::DynamoDB::Table
@@ -27,6 +30,9 @@ Resources:
         - AttributeName: usageId
           KeyType: HASH
       BillingMode: PAY_PER_REQUEST
+      TimeToLiveSpecification:
+        AttributeName: ttl
+        Enabled: true
 
   # Lambda Functions
   FeedbackCollectionFunction:
