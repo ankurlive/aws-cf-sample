@@ -1,0 +1,44 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "AllowSpecificTables",
+            "Effect": "Allow",
+            "Action": "dynamodb:*",
+            "Resource": [
+                "arn:aws:dynamodb:us-east-2:487317039821:table/feedback-collection",
+                "arn:aws:dynamodb:us-east-2:487317039821:table/usage-collection"
+            ]
+        },
+        {
+            "Sid": "AllowListingOwnTables",
+            "Effect": "Allow",
+            "Action": [
+                "dynamodb:ListTables",
+                "dynamodb:DescribeTable"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Sid": "AllowReadScalingPolicies",
+            "Effect": "Allow",
+            "Action": [
+                "application-autoscaling:DescribeScalableTargets",
+                "application-autoscaling:DescribeScalingActivities",
+                "application-autoscaling:DescribeScalingPolicies"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Sid": "AllowReadCloudWatch",
+            "Effect": "Allow",
+            "Action": [
+                "cloudwatch:DescribeAlarms",
+                "cloudwatch:GetMetricData",
+                "cloudwatch:GetMetricStatistics",
+                "cloudwatch:ListMetrics"
+            ],
+            "Resource": "*"
+        }
+    ]
+}
