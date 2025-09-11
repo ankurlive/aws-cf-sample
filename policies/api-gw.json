@@ -1,0 +1,30 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "AllowFullAccessToSpecificApis",
+            "Effect": "Allow",
+            "Action": "apigateway:*",
+            "Resource": [
+                "arn:aws:apigateway:us-east-2::/apis/a2decdnyy5*",
+                "arn:aws:apigateway:us-east-2::/apis/a2decdnyy5/*",
+                "arn:aws:apigateway:us-east-2::/restapis/ze1zfpeip9*",
+                "arn:aws:apigateway:us-east-2::/restapis/ze1zfpeip9/*",
+                "arn:aws:apigateway:us-east-2::/restapis/w0muk2p04m*",
+                "arn:aws:apigateway:us-east-2::/restapis/w0muk2p04m/*"
+            ]
+        },
+        {
+            "Sid": "AllowMinimalGetForConsole",
+            "Effect": "Allow",
+            "Action": [
+                "apigateway:GET"
+            ],
+            "Resource": [
+                "arn:aws:apigateway:us-east-2::/restapis",
+                "arn:aws:apigateway:us-east-2::/apis",
+                "arn:aws:apigateway:us-east-2::/account"
+            ]
+        }
+    ]
+}
