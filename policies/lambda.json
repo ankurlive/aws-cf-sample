@@ -1,0 +1,24 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "AllowSpecificLambdas",
+            "Effect": "Allow",
+            "Action": "lambda:*",
+            "Resource": [
+                "arn:aws:lambda:us-east-2:487317039821:function:feedback_collection",
+                "arn:aws:lambda:us-east-2:487317039821:function:updateusage",
+                "arn:aws:lambda:us-east-2:487317039821:function:get-alias-promt"
+            ]
+        },
+        {
+            "Sid": "AllowListingOwnLambdas",
+            "Effect": "Allow",
+            "Action": [
+                "lambda:ListFunctions",
+                "lambda:GetFunction"
+            ],
+            "Resource": "*"
+        }
+    ]
+}
